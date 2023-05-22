@@ -15,20 +15,17 @@ export class AuthService {
     private configService: ConfigService,
     @Inject('notifications_ms')
     private notificationMsClient: ClientKafka,
-  ) {
-    console.log(notificationMsClient);
-  }
+  ) {}
 
   async talentSignup(talentSignupRequest: TalentSignupRequest) {
     talentSignupRequest.password = await argon.hash(
       talentSignupRequest.password,
     );
-    // const talent = await this.talentService.signup(talentSignupRequest);
+    const talent = await this.talentService.signup(talentSignupRequest);
     this.notificationMsClient.emit('new_talent_signup', {
-      email: talentSignupRequest.email,
-      name: 'James obi',
+      email: talent.email,
+      name: `${talent.firstName} ${talent.lastName}`,
     });
-    console.log(talentSignupRequest.email);
     return talentSignupRequest;
   }
 
